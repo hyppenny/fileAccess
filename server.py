@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Api, Resource, reqparse
-import os
+import os, shutil
 
 app = Flask(__name__)
 api = Api(app)
@@ -28,7 +28,7 @@ class fileList(Resource):
         filename = request.parse_args()['filename']
         file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "example")
         f = [f for f in filelist if f == filename]
-        if len(f)!= 0:
+        if len(f) != 0:
             return False
         filelist.append(filename)
         addPath = os.path.join(file_path, filename)
@@ -40,19 +40,18 @@ class fileList(Resource):
         return data
 
 
-
 class fileItself(Resource):
-    def get(self, f):
+    def get(self, filename):
         file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "example")
-        print(os.path.join(file_path, f))
+        # print(os.path.join(file_path, f))
         file = ''
         for f1 in filelist:
-            if f1 == f:
+            if f1 == filename:
                 file = f1
         # print(file)
         if len(file) == 0:
             return False
-        with open(os.path.join(file_path, f)) as f:
+        with open(os.path.join(file_path, file)) as f:
             data = f.readlines()
         return data
 
@@ -72,21 +71,25 @@ class fileItself(Resource):
         return content
 
     def delete(self, filename):
-        #print("111")
-        file_path  = os.path.join(os.path.dirname(os.path.realpath(__file__)), "example")
+        print("111")
+        file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "example")
         f = [f for f in filelist if f == filename]
         if len(f) == 0:
             return False
         deletePath = os.path.join(file_path, filename)
+        # print(filelist,"@@@")
         os.remove(deletePath)
         filelist.remove(filelist.index(filename))
-        #print('222')
+        # print(filelist,"!!!")
+        # filelist.remove(filename)
+        # print(filelist,"###")
+
         print(filelist)
         return True
 
 
 api.add_resource(fileList, '/fileList')
-api.add_resource(fileItself, '/file/<string:f>')
+api.add_resource(fileItself, '/file/<string:filename>')
 
 if __name__ == '__main__':
     filelist = []

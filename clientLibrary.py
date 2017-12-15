@@ -29,6 +29,7 @@ class clientLibrary():
 
     def edit(self, filename, content):
         request = requests.put("http://127.0.0.1:2333/file/{}".format(filename), json= {'content': content})
+        #print(request)
         #print("")
         content = json.loads(request.text)
         if content is False:
@@ -40,7 +41,7 @@ class clientLibrary():
 
     def delete(self, filename):
         request = requests.delete("http://127.0.0.1:2333/file/{}".format(filename))
-        #print(request.text)
+        print(request.text)
         content = json.loads(request.text)
         if content is False:
             print("File does not exist")
